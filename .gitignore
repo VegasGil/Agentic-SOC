@@ -1,0 +1,15 @@
+# Secretos
+.env
+*.env
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Evidencia local
+data/
+audit/
+*.json
