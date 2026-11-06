@@ -19,23 +19,25 @@ El sistema está diseñado bajo una arquitectura de microservicios para IA, dond
 
 
 
-    [Alertas de Splunk] -->|Lectura| B(J.A.R.V.I.S. - Orquestador)
-    |Triaje| C(V.I.S.I.O.N. - Analista)
+    graph TD
+    A[Splunk SIEM / Alertas] -->|Lectura de Alertas| B(J.A.R.V.I.S. - Orquestador)
+    B -->|Notificacion / Alerta| K[Slack API]
+    B -->|Triaje| C(V.I.S.I.O.N. - Analista)
     
-    |Incidente DFIR| D[F.R.I.D.A.Y.]
-    |Auditoria Red| E[E.D.I.T.H.]
-    |Auditoria Codigo| F[K.A.R.E.N.]
-    |Desconocido| G[Escalado a Humano]
+    C -->|Incidente DFIR| D[F.R.I.D.A.Y.]
+    C -->|Auditoria Red| E[E.D.I.T.H.]
+    C -->|Auditoria Codigo| F[K.A.R.E.N.]
+    C -->|Desconocido| G[Escalado a Humano]
 
-    |Investigacion| H(Microsoft Defender)
-    |Busqueda Proactiva| H
-    |Busqueda CVEs| H
+    D -->|Investigacion| H(Microsoft Defender)
+    E -->|Busqueda Proactiva| H
+    F -->|Busqueda CVEs| H
 
-    |Evidencia| I(Carpeta /data)
+    H -.->|Evidencia| I(Carpeta /data)
     
-    |Analisis| J(Ollama Local)
-    |Analisis| J
-    |EPSS/KEV| J
+    D -->|Analisis| J(Ollama Local)
+    E -->|Analisis| J
+    F -->|EPSS/KEV| J
 
  ## 🤖 Los Agentes (El Equipo)
 
