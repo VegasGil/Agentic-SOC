@@ -10,10 +10,11 @@ def test_jarvis_router_mock(mocker):
         {"id": "3", "computerDnsName": "pc-01", "title": "Equipos Zombie"}
     ]
     
-    # 2. Simulamos la lectura de archivos
-    mocker.patch("os.path.exists", return_value=True)
-    mocker.patch("json.load", side_effect=[mock_alerts, []]) # 1ro alertas, 2do estado vacío
-    mocker.patch("json.dump")
+    # 2. Simulamos las funciones de archivos
+    mocker.patch("jarvis.os.path.exists", return_value=True)
+    # json.load se llama 2 veces: 1ra para alertas, 2da para estado (lista vacía)
+    mocker.patch("jarvis.json.load", side_effect=[mock_alerts, []])
+    mocker.patch("jarvis.json.dump")
     
     # 3. Simulamos la función de Splunk
     mocker.patch("jarvis.fetch_splunk_alerts")
@@ -25,5 +26,5 @@ def test_jarvis_router_mock(mocker):
     # 5. Ejecutamos
     procesar_alertas()
 
-    # 6. Verificamos que la herramienta de Azure se llamó (4 veces: 2 de Friday, 1 Karen, 1 Edith)
+    # 6. Verificamos que se llamó a la herramienta (4 veces: 2 Friday, 1 Karen, 1 Edith)
     assert mock_tool.run.call_count == 4
