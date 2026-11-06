@@ -1,0 +1,44 @@
+name: Detection-as-Code (Sigma)
+
+on:
+  push:
+    paths:
+      - 'playbooks/**'
+  pull_request:
+    paths:
+      - 'playbooks/**'
+
+jobs:
+  validate-sigma:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          # AQUÍ ESTÁ LA MAGIA: Instala el archivo de dependencias de detecciones
+          pip install -r requirements-detections.txt
+          
+      - name: Validate Sigma Rules (Python)
+        run: |
+          python -c "
+          import yaml, glob, sys
+          files = glob.glob('playbooks/*.yml')
+          if not files:
+              print('No hay reglas Sigma para validar.')
+              sys.exit(0)
+          for f in files:
+              try:
+                  with open(f, 'r') as file:
+                      yaml.safe_load(file)
+                      print(f'✅ Regla {f} validada correctamente.')
+              except Exception as e:
+                  print(f'❌ Error en {f}: {e}')
+                  sys.exit(1)
+          "

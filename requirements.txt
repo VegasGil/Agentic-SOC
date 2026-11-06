@@ -5,3 +5,5 @@ python-dotenv
 requests
 msal
 litellm
+pytest
+pytest-mock
