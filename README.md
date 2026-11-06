@@ -12,7 +12,7 @@ Inspirado en los sistemas de Marvel, cada agente tiene una especialidad única, 
 
 > 🎥 **** *(Próximamente)*
 
-## 🏗️ Arquitectura del Flujo (El Ecosistema)
+# 🏗️ Arquitectura del Flujo (El Ecosistema)
 
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
