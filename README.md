@@ -17,8 +17,8 @@
 
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
-```mermaid
-graph TD
+
+
     [Alertas de Splunk] -->|Lectura| B(J.A.R.V.I.S. - Orquestador)
     |Triaje| C(V.I.S.I.O.N. - Analista)
     
