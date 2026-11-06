@@ -10,9 +10,11 @@
 
 Inspirado en los sistemas de Marvel, cada agente tiene una especialidad única, coordinados por un núcleo central.
 
-> 🎥 **** *(Próximamente)*
+> 🎥 *(Próximamente)*
 
-# 🏗️ Arquitectura del Flujo (El Ecosistema)
+---
+
+## 🏗️ Arquitectura del Flujo (El Ecosistema)
 
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
@@ -36,43 +38,46 @@ graph TD
     E -->|Analisis| J
     F -->|EPSS/KEV| J
 
- Los Agentes (El Equipo)
-1. J.A.R.V.I.S. (El Orquestador)
+ ## 🤖 Los Agentes (El Equipo)
 
-Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
-2. V.I.S.I.O.N. (Analista de Triaje)
+1. **J.A.R.V.I.S. (El Orquestador)**  
+   Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
 
-El primer filtro. Lee la alerta cruda y decide, basándose en el contexto, qué agente debe investigar. Si no reconoce la amenaza, la escala a un humano.
-3. F.R.I.D.A.Y. (Especialista DFIR)
+2. **V.I.S.I.O.N. (Analista de Triaje)**  
+   El primer filtro. Lee la alerta cruda y decide, basándose en el contexto, qué agente debe investigar. Si no reconoce la amenaza, la escala a un humano.
 
-Rápida y resolutiva. Es la encargada de los Incidentes (DFIR). Cuando Visión detecta Malware o Ransomware, Friday se conecta a Microsoft Defender, ejecuta playbooks KQL (búsqueda de logins, procesos, conexiones de red), guarda la evidencia y redacta el informe forense.
-4. E.D.I.T.H. (Cazador de Amenazas)
+3. **F.R.I.D.A.Y. (Especialista DFIR)**  
+   Rápida y resolutiva. Es la encargada de los Incidentes (DFIR). Cuando Visión detecta Malware o Ransomware, Friday se conecta a Microsoft Defender, ejecuta playbooks KQL (búsqueda de logins, procesos, conexiones de red), guarda la evidencia y redacta el informe forense.
 
-Encuentra lo que otros no ven. Se encarga del Threat Hunting proactivo. Audita la infraestructura en busca de "Equipos Zombie" (máquinas encendidas sin uso humano) o comportamientos anómalos, sin esperar a que salte una alarma.
-5. K.A.R.E.N. (Gestora de Vulnerabilidades y ASPM)
+4. **E.D.I.T.H. (Cazador de Amenazas)**  
+   Encuentra lo que otros no ven. Se encarga del Threat Hunting proactivo. Audita la infraestructura en busca de "Equipos Zombie" (máquinas encendidas sin uso humano) o comportamientos anómalos, sin esperar a que salte una alarma.
 
-Analiza el entorno y el código. Es la experta en RBVM (Risk-Based Vulnerability Management). Busca CVEs en los endpoints (Defender) y en el código (Trivy/ASPM). Cruza los resultados con las bases de datos de EPSS (probabilidad de explotación) y CISA KEV (explotación activa) para priorizar qué parchear primero. Se actualiza automáticamente cada 24h.
-6. D.E.T.E.C.T.O.R. (Traductor Sigma)
+5. **K.A.R.E.N. (Gestora de Vulnerabilidades y ASPM)**  
+   Analiza el entorno y el código. Es la experta en RBVM (Risk-Based Vulnerability Management). Busca CVEs en los endpoints (Defender) y en el código (Trivy/ASPM). Cruza los resultados con las bases de datos de EPSS (probabilidad de explotación) y CISA KEV (explotación activa) para priorizar qué parchear primero. Se actualiza automáticamente cada 24h.
 
-El ingeniero de detección. Convierte reglas universales Sigma (YAML) en consultas KQL nativas para Defender, garantizando la portabilidad del código.
-🚀 Despliegue Rápido (Instalación)
+6. **D.E.T.E.C.T.O.R. (Traductor Sigma)**  
+   El ingeniero de detección. Convierte reglas universales Sigma (YAML) en consultas KQL nativas para Defender, garantizando la portabilidad del código.
 
-    Clona el repositorio:
-    bash
+---
 
-    git clone https://github.com/VegasGil/Agentic-SOC.git
-    cd Agentic-SOC
+## 🚀 Despliegue Rápido (Instalación)
+
+1. **Clona el repositorio:**
+   ```bash
+   git clone [https://github.com/VegasGil/Agentic-SOC.git](https://github.com/VegasGil/Agentic-SOC.git)
+   cd Agentic-SOC
 
     Instala las dependencias:
-    bash
+    Bash
 
     python -m venv .venv
     source .venv/bin/activate  # En Windows: .\.venv\Scripts\activate
     pip install -r requirements.txt
 
     Configura tus variables de entorno (.env):
+
     Necesitarás las credenciales de Splunk, Azure (Defender) y un modelo local en Ollama.
-    dotenv
+    Fragmento de código
 
     # Ollama
     OLLAMA_URL=http://localhost:11434/api/chat
@@ -91,18 +96,18 @@ El ingeniero de detección. Convierte reglas universales Sigma (YAML) en consult
     AZURE_CLIENT_SECRET=tu_secret
 
     Inicia Ollama en segundo plano:
-    bash
+    Bash
 
     ollama run qwen2.5:3b
 
     Ejecuta el Orquestador:
-    bash
+    Bash
 
     python jarvis.py
 
 🧪 Testing y CI/CD
 
-El proyecto cuenta con un pipeline de GitHub Actions que garantiza que el código no se rompa y que los agentes estén correctamente configurados.
+El proyecto cuenta con un pipeline de GitHub Actions que garantiza que el código no se rompa y que los agentes estén correctamente configurados:
 
     Pytest: 10 tests unitarios con mocks (no dependen de red ni credenciales).
 
