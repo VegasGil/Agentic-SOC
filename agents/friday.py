@@ -12,3 +12,12 @@ friday = Agent(
     verbose=True,
     max_iter=5
 )
+
+def ejecutar_friday(equipo: str, incidente: str):
+    from tools.kql_runner import run_and_analyze
+    print("🕵️ F.R.I.D.A.Y. iniciando DFIR...")
+    print("   -> Buscando Logins...")
+    res1 = run_and_analyze.run(playbook_filename='dfir_fase1_identificacion.kql', equipo=equipo, incidente=incidente)
+    print("   -> Buscando Procesos...")
+    res2 = run_and_analyze.run(playbook_filename='dfir_fase2_procesos.kql', equipo=equipo, incidente=incidente)
+    return f"Logins:\n{res1}\nProcesos:\n{res2}"

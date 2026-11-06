@@ -12,3 +12,8 @@ edith = Agent(
     verbose=True,
     max_iter=5
 )
+
+def ejecutar_edith(equipo: str):
+    from tools.kql_runner import run_and_analyze
+    print("🎯 E.D.I.T.H. iniciando Threat Hunting...")
+    return run_and_analyze.run(playbook_filename='hunting_zombie_machines.kql', equipo=equipo, incidente="Auditoría de Equipos")

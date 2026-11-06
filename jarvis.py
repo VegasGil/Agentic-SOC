@@ -3,8 +3,11 @@ import json
 from crewai import Crew, Task
 from agents.vision import vision
 from tools.splunk_reader import fetch_splunk_alerts
-from tools.kql_runner import run_and_analyze
-from agents.friday import friday
+
+# Importamos los ejecutores de los agentes (la lógica vive en cada archivo)
+from agents.friday import ejecutar_friday
+from agents.edith import ejecutar_edith
+from agents.karen import ejecutar_karen
 
 STATE_FILE = "data/state_alerts.json"
 
@@ -66,51 +69,24 @@ def procesar_alertas():
         
         print(f"🤖 Jarvis enruta a: {decision}")
 
-        # 4. Ejecutar al agente correspondiente
+        # 4. ENRUTAMIENTO LIMPIO (Jarvis solo llama a la función)
         if "FRIDAY" in decision:
-            print("🕵️ F.R.I.D.A.Y. iniciando DFIR...")
+            reporte = ejecutar_friday(equipo_afectado, titulo)
+            print("\n=== RESULTADO F.R.I.D.A.Y. ===")
+            print(reporte)
             
-            print("   -> Buscando Logins (Fase 1)...")
-            res_logins = run_and_analyze.run(
-                playbook_filename='dfir_fase1_identificacion.kql', 
-                equipo=equipo_afectado, 
-                incidente=titulo
-            )
-            
-            print("   -> Buscando Procesos (Fase 2)...")
-            res_procs = run_and_analyze.run(
-                playbook_filename='dfir_fase2_procesos.kql', 
-                equipo=equipo_afectado, 
-                incidente=titulo
-            )
-            
-            print("\n=== RESULTADO LOGINS ===")
-            print(res_logins)
-            print("\n=== RESULTADO PROCESOS ===")
-            print(res_procs)
-
         elif "EDITH" in decision:
-            print("🎯 E.D.I.T.H. iniciando Threat Hunting...")
-            res_hunting = run_and_analyze.run(
-                playbook_filename='hunting_zombie_machines.kql', 
-                equipo=equipo_afectado, 
-                incidente="Auditoría de Equipos Zombie"
-            )
-            print("\n=== RESULTADO HUNTING ===")
-            print(res_hunting)
-
+            reporte = ejecutar_edith(equipo_afectado)
+            print("\n=== RESULTADO E.D.I.T.H. ===")
+            print(reporte)
+            
         elif "KAREN" in decision:
-            print("🛡️ K.A.R.E.N. iniciando Auditoría de Vulnerabilidades...")
-            res_vuln = run_and_analyze.run(
-                playbook_filename='vuln_cve_equipo.kql', 
-                equipo=equipo_afectado, 
-                incidente="Auditoría de Vulnerabilidades"
-            )
-            print("\n=== RESULTADO VULNERABILIDADES ===")
-            print(res_vuln)
+            reporte = ejecutar_karen(equipo_afectado)
+            print("\n=== RESULTADO K.A.R.E.N. (RBVM) ===")
+            print(reporte)
             
         else:
-            print("⚠️ Jarvis no reconoció la decisión de Visión. No se ejecutó ningún agente.")
+            print("⚠️ Jarvis no reconoció la decisión de Visión.")
 
         # 5. Marcar como atendida y guardar estado
         atendidas.append(alert_id)
@@ -118,5 +94,5 @@ def procesar_alertas():
         print(f"✅ Alerta {alert_id} marcada como atendida.")
 
 if __name__ == "__main__":
-    print("🚀 Iniciando Jarvis (Modo Autónomo y Continuo)...")
+    print("🚀 Iniciando Jarvis (Modo Refactorizado con Agentes Autónomos)...")
     procesar_alertas()
