@@ -10,7 +10,7 @@
 
 Inspirado en los sistemas de Marvel, cada agente tiene una especialidad única, coordinados por un núcleo central.
 
-> 🎥 **[Mira el video demo aquí]** *(Próximamente)*
+> 🎥 **** *(Próximamente)*
 
 ## 🏗️ Arquitectura del Flujo (El Ecosistema)
 
@@ -18,25 +18,25 @@ El sistema está diseñado bajo una arquitectura de microservicios para IA, dond
 
 ```mermaid
 graph TD
-    A[Alertas de Splunk / Nirvana] -->|Lectura| B(J.A.R.V.I.S. - Orquestador)
-    B -->|Triaje / Clasificación| C(V.I.S.I.O.N. - Analista de Triaje)
+    A[Alertas de Splunk] -->|Lectura| B(J.A.R.V.I.S. - Orquestador)
+    B -->|Triaje| C(V.I.S.I.O.N. - Analista)
     
     C -->|Incidente DFIR| D[F.R.I.D.A.Y.]
-    C -->|Auditoría Red| E[E.D.I.T.H.]
-    C -->|Auditoría Código/Infra| F[K.A.R.E.N.]
+    C -->|Auditoria Red| E[E.D.I.T.H.]
+    C -->|Auditoria Codigo| F[K.A.R.E.N.]
     C -->|Desconocido| G[Escalado a Humano]
 
-    D -->|Investigación Forense| H(Microsoft Defender / KQL)
-    E -->|Búsqueda Proactiva| H
-    F -->|Búsqueda de CVEs| H
+    D -->|Investigacion| H(Microsoft Defender)
+    E -->|Busqueda Proactiva| H
+    F -->|Busqueda CVEs| H
 
-    H -.->|Guardado de Evidencia| I(Carpeta /data)
+    H -.->|Evidencia| I(Carpeta /data)
     
-    D -->|Análisis Final| J(Ollama Local)
-    E -->|Análisis Final| J
-    F -->|Enriquecimiento EPSS/KEV| J
+    D -->|Analisis| J(Ollama Local)
+    E -->|Analisis| J
+    F -->|EPSS/KEV| J
 
-🦸‍♂️ Los Agentes (El Equipo)
+ Los Agentes (El Equipo)
 1. J.A.R.V.I.S. (El Orquestador)
 
 Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
@@ -109,5 +109,3 @@ El proyecto cuenta con un pipeline de GitHub Actions que garantiza que el códig
     Semgrep (SAST): Análisis estático del código Python.
 
     Trivy (SCA): Escaneo de dependencias vulnerables.
-
-Desarrollado por Freddy Vegas como parte de su portafolio de Seguridad y DevSecOps. El futuro de la ciberseguridad es autónomo.
