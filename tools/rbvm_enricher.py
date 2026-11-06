@@ -8,20 +8,32 @@ def prioritize_cves(cves_json: str) -> str:
     print("   -> [K.A.R.E.N.] Enriqueciendo CVEs con EPSS y KEV...")
     
     try:
-        cves = json.loads(cves_json)
-    except:
-        return "Error: No se pudo parsear el JSON de CVEs."
+        # Intentamos parsear el JSON. Si es un texto, buscamos el array.
+        if isinstance(cves_json, str):
+            start = cves_json.find('[')
+            end = cves_json.rfind(']') + 1
+            if start != -1 and end != 0:
+                cves = json.loads(cves_json[start:end])
+            else:
+                return "Error: No se encontró un array JSON en el texto."
+        else:
+            cves = cves_json
+    except Exception as e:
+        return f"Error al parsear CVEs: {e}"
 
     # Cargar bases de datos locales (asumiendo que están en aspm/data/)
     epss_db = {}
     kev_db = set()
     
-    if os.path.exists("aspm/data/epss.json"):
-        with open("aspm/data/epss.json", "r") as f:
-            epss_db = json.load(f)
-    if os.path.exists("aspm/data/kev.json"):
-        with open("aspm/data/kev.json", "r") as f:
-            kev_db = set(json.load(f))
+    try:
+        if os.path.exists("aspm/data/epss.json"):
+            with open("aspm/data/epss.json", "r") as f:
+                epss_db = json.load(f)
+        if os.path.exists("aspm/data/kev.json"):
+            with open("aspm/data/kev.json", "r") as f:
+                kev_db = set(json.load(f))
+    except Exception as e:
+        return f"Error al cargar bases de datos locales: {e}"
 
     # Enriquecer
     priorizadas = []
@@ -60,7 +72,7 @@ def prioritize_cves(cves_json: str) -> str:
     # Ordenar por prioridad (KEV primero, luego EPSS)
     priorizadas.sort(key=lambda x: (not x["en_kev"], -x["epss"]))
 
-    # Crear resumen para Ollama
+    # Crear resumen
     resumen = "CVEs encontradas y priorizadas:\n"
     for p in priorizadas:
         resumen += f"- {p['cve']} en {p['paquete']} (Sev: {p['severidad_base']}). EPSS: {p['epss']:.2f}. KEV: {'SÍ' if p['en_kev'] else 'No'}. Prioridad: {p['prioridad']}. Acción: {p['accion']}\n"
