@@ -39,80 +39,75 @@ El sistema está diseñado bajo una arquitectura de microservicios para IA, dond
                                                                                             [ Ollama (Local) ]
                                                                                          (Análisis y EPSS / KEV)
 
-🤖 Los Agentes (El Equipo)
 
-    J.A.R.V.I.S. (El Orquestador)
-    Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
+## 🤖 Los Agentes (El Equipo)
 
-    V.I.S.I.O.N. (Analista de Triaje)
-    El primer filtro. Lee la alerta cruda y decide, basándose en el contexto, qué agente debe investigar. Si no reconoce la amenaza, la escala a un humano.
+1. **J.A.R.V.I.S. (El Orquestador)**  
+   Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
 
-    F.R.I.D.A.Y. (Especialista DFIR)
-    Rápida y resolutiva. Es la encargada de los Incidentes (DFIR). Cuando Visión detecta Malware o Ransomware, Friday se conecta a Microsoft Defender, ejecuta playbooks KQL (búsqueda de logins, procesos, conexiones de red), guarda la evidencia y redacta el informe forense.
+2. **V.I.S.I.O.N. (Analista de Triaje)**  
+   El primer filtro. Lee la alerta cruda y decide, basándose en el contexto, qué agente debe investigar. Si no reconoce la amenaza, la escala a un humano.
 
-    E.D.I.T.H. (Cazador de Amenazas)
-    Encuentra lo que otros no ven. Se encarga del Threat Hunting proactivo. Audita la infraestructura en busca de "Equipos Zombie" (máquinas encendidas sin uso humano) o comportamientos anómalos, sin esperar a que salte una alarma.
+3. **F.R.I.D.A.Y. (Especialista DFIR)**  
+   Rápida y resolutiva. Es la encargada de los Incidentes (DFIR). Cuando Visión detecta Malware o Ransomware, Friday se conecta a Microsoft Defender, ejecuta playbooks KQL (búsqueda de logins, procesos, conexiones de red), guarda la evidencia y redacta el informe forense.
 
-    K.A.R.E.N. (Gestora de Vulnerabilidades y ASPM)
-    Analiza el entorno y el código. Es la experta en RBVM (Risk-Based Vulnerability Management). Busca CVEs en los endpoints (Defender) y en el código (Trivy/ASPM). Cruza los resultados con las bases de datos de EPSS (probabilidad de explotación) y CISA KEV (explotación activa) para priorizar qué parchear primero. Se actualiza automáticamente cada 24h.
+4. **E.D.I.T.H. (Cazador de Amenazas)**  
+   Encuentra lo que otros no ven. Se encarga del Threat Hunting proactivo. Audita la infraestructura en busca de "Equipos Zombie" (máquinas encendidas sin uso humano) o comportamientos anómalos, sin esperar a que salte una alarma.
 
-    D.E.T.E.C.T.O.R. (Traductor Sigma)
-    El ingeniero de detección. Convierte reglas universales Sigma (YAML) en consultas KQL nativas para Defender, garantizando la portabilidad del código.
+5. **K.A.R.E.N. (Gestora de Vulnerabilidades y ASPM)**  
+   Analiza el entorno y el código. Es la experta en RBVM (Risk-Based Vulnerability Management). Busca CVEs en los endpoints (Defender) y en el código (Trivy/ASPM). Cruza los resultados con las bases de datos de EPSS (probabilidad de explotación) y CISA KEV (explotación activa) para priorizar qué parchear primero. Se actualiza automáticamente cada 24h.
 
-🚀 Despliegue Rápido (Instalación)
+6. **D.E.T.E.C.T.O.R. (Traductor Sigma)**  
+   El ingeniero de detección. Convierte reglas universales Sigma (YAML) en consultas KQL nativas para Defender, garantizando la portabilidad del código.
 
-    Clona el repositorio:
-    bash
+---
 
-    git clone https://github.com/VegasGil/Agentic-SOC.git
-    cd Agentic-SOC
+## 🚀 Despliegue Rápido (Instalación)
 
-    Instala las dependencias:
-    bash
+1. **Clona el repositorio:**
+   ```bash
+   git clone https://github.com/VegasGil/Agentic-SOC.git
+   cd Agentic-SOC
 
-    python -m venv .venv
-    source .venv/bin/activate  # En Windows: .\.venv\Scripts\activate
-    pip install -r requirements.txt
 
-    Configura tus variables de entorno (.env):
+# 2 Instala las dependencias:
+python -m venv .venv
+source .venv/bin/activate  # En Windows: .\.venv\Scripts\activate
+pip install -r requirements.txt
 
-    Necesitarás las credenciales de Splunk, Azure (Defender) y un modelo local en Ollama.
-    env
+# 3 Configura tus variables de entorno (.env):
+# Ollama
+OLLAMA_URL=http://localhost:11434
+OLLAMA_MODEL=qwen2.5:3b
 
-    # Ollama
-    OLLAMA_URL=http://localhost:11434
-    OLLAMA_MODEL=qwen2.5:3b
+# Splunk
+SPLUNK_HOST=tu_ip
+SPLUNK_REST_PORT=8089
+SPLUNK_USER=admin
+SPLUNK_PASS=tu_password
+HEC_TOKEN=tu_hec_token
 
-    # Splunk
-    SPLUNK_HOST=tu_ip
-    SPLUNK_REST_PORT=8089
-    SPLUNK_USER=admin
-    SPLUNK_PASS=tu_password
-    HEC_TOKEN=tu_hec_token
+# Azure (Defender)
+AZURE_TENANT_ID=tu_tenant
+AZURE_CLIENT_ID=tu_client
+AZURE_CLIENT_SECRET=tu_secret
 
-    # Azure (Defender)
-    AZURE_TENANT_ID=tu_tenant
-    AZURE_CLIENT_ID=tu_client
-    AZURE_CLIENT_SECRET=tu_secret
+# Inicia Ollama en segundo plano y Ejecuta el Orquestador
+ollama run qwen2.5:3b
+python jarvis.py
 
-    Inicia Ollama en segundo plano:
-    bash
 
-    ollama run qwen2.5:3b
+---
 
-    Ejecuta el Orquestador:
-    bash
+## 🐳 Docker (Recomendado)
 
-    python jarvis.py
+El proyecto incluye `Dockerfile` (basado en `python:3.11-slim-bookworm`, que trae SQLite ≥ 3.40 requerido por ChromaDB) y `docker-compose.yml`.
 
-🐳 Docker (Recomendado)
+### Modo Demo (sin credenciales reales)
 
-El proyecto incluye Dockerfile (basado en python:3.11-slim-bookworm, que trae SQLite ≥ 3.40 requerido por ChromaDB) y docker-compose.yml.
-Modo Demo (sin credenciales reales)
+Para probar el flujo completo sin Splunk, Azure ni Ollama reales, usa el archivo `.env.demo`:
 
-Para probar el flujo completo sin Splunk, Azure ni Ollama reales, usa el archivo .env.demo:
-bash
-
+```bash
 # Linux/Mac
 cp .env.demo .env
 
@@ -129,9 +124,7 @@ docker compose ps -a
 # Ver logs del flujo completo
 docker compose logs --tail=60 agentic-soc
 
-Salida esperada en modo demo:
-text
-
+# Salida esperada en modo demo:
 🚀 Iniciando Jarvis (Modo Refactorizado con Agentes Autónomos)...
    -> [DEMO MODE] Simulando alertas de Splunk...
 🚨 NUEVA ALERTA: demo-alert-001 - Ransomware detected
@@ -140,13 +133,7 @@ text
    -> [DEMO MODE] F.R.I.D.A.Y. no conecta a Azure real.
 ✅ Alerta demo-alert-001 marcada como atendida.
 
-    Nota: jarvis.py es un script de una sola ejecución (no un daemon). Por eso docker compose ps -a muestra Exited (0) cuando termina correctamente. docker compose ps (sin -a) sale vacío porque el contenedor ya terminó.
-
-Modo Real (con credenciales)
-
-Configura tu .env con credenciales reales de Splunk, Azure y Ollama (ver sección anterior), y ejecuta:
-bash
-
+# Modo Real (con credenciales)
 docker compose build --no-cache
 docker compose up -d
 
@@ -161,3 +148,4 @@ El proyecto cuenta con un pipeline de GitHub Actions que garantiza que el códig
     Trivy (SCA): Escaneo de dependencias vulnerables.
 
     Docker build: Validación de que la imagen se construye correctamente.
+    
