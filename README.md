@@ -17,7 +17,6 @@
 
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
-
 graph TD
     %% --- Entradas y Orquestación ---
     subgraph Entrada["1. Ingesta y Orquestación"]
