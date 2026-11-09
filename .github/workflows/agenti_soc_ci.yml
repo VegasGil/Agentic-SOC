@@ -67,7 +67,6 @@ jobs:
           pip install -r requirements-detections.txt
           # Instalamos pytest
           pip install pytest pytest-mock
-          python -c "import pysqlite3; print('pysqlite3 OK:', pysqlite3.sqlite_version)"
       - name: Run Pytest
         run: |
           python -m pytest tests/ -v
