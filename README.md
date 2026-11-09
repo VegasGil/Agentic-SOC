@@ -38,8 +38,8 @@ El sistema está diseñado bajo una arquitectura de microservicios para IA, dond
                                                                                                     ▼
                                                                                             [ Ollama (Local) ]
                                                                                          (Análisis y EPSS / KEV)
-                                                                                         
-## 🤖 Los Agentes (El Equipo)
+
+🤖 Los Agentes (El Equipo)
 
     J.A.R.V.I.S. (El Orquestador)
     Es el director del SOC. Se encarga de leer las alertas entrantes de Splunk, coordinar al agente de triaje (Visión) y llamar al especialista adecuado (F.R.I.D.A.Y., E.D.I.T.H. o K.A.R.E.N.) dependiendo de la naturaleza del incidente.
@@ -105,7 +105,7 @@ El sistema está diseñado bajo una arquitectura de microservicios para IA, dond
 
     python jarvis.py
 
-## 🐳 Docker (Recomendado)
+🐳 Docker (Recomendado)
 
 El proyecto incluye Dockerfile (basado en python:3.11-slim-bookworm, que trae SQLite ≥ 3.40 requerido por ChromaDB) y docker-compose.yml.
 Modo Demo (sin credenciales reales)
