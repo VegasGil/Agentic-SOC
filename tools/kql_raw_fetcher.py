@@ -10,6 +10,15 @@ load_dotenv()
 @tool("Buscar CVEs en Defender (Raw)")
 def fetch_cves_raw(equipo: str) -> str:
     """Busca CVEs en Azure Defender y devuelve el JSON crudo (sin Ollama)."""
+    
+    # MODO DEMO PARA RECLUTADORES
+    if os.getenv("AZURE_TENANT_ID") == "demo":
+        print("   -> [DEMO MODE] Simulando búsqueda de CVEs en Defender...")
+        return json.dumps([
+            {"CveId": "CVE-2021-44228", "SoftwareName": "log4j", "VulnerabilitySeverityLevel": "Critical"},
+            {"CveId": "CVE-2024-1234", "SoftwareName": "libpcre2", "VulnerabilitySeverityLevel": "High"}
+        ])
+
     print(f"   -> [Azure] Buscando CVEs para {equipo}...")
     
     tenant_id = os.getenv("AZURE_TENANT_ID")

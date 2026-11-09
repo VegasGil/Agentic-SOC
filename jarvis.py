@@ -1,5 +1,9 @@
 import os
 import json
+from dotenv import load_dotenv
+
+load_dotenv()  # Carga .env antes de importar crewai/agentes
+
 from crewai import Crew, Task
 from agents.vision import vision
 from tools.splunk_reader import fetch_splunk_alerts
@@ -13,8 +17,15 @@ STATE_FILE = "data/state_alerts.json"
 
 def load_state():
     if os.path.exists(STATE_FILE):
-        with open(STATE_FILE, "r") as f:
-            return json.load(f)
+        try:
+            with open(STATE_FILE, "r") as f:
+                content = f.read().strip()
+                if not content:          # archivo vacío → estado inicial
+                    return []
+                return json.loads(content)
+        except (json.JSONDecodeError, ValueError):
+            print("⚠️ state_alerts.json corrupto o vacío. Reiniciando estado.")
+            return []
     return []
 
 def save_state(state):
@@ -53,21 +64,32 @@ def procesar_alertas():
         print(f"\n🚨 NUEVA ALERTA: {alert_id} - {titulo}")
         print(f"   Equipo afectado: {equipo_afectado}")
         
-        # 3. Visión clasifica la alerta
-        tarea_vision = Task(
-            description=f"""Analiza esta alerta: '{titulo} - {desc}'.
-            Determina quién debe investigar:
-            - Si es Ransomware, Malware, Procesos -> Responde: FRIDAY
-            - Si es Equipos Zombie -> Responde: EDITH
-            - Si es CVE -> Responde: KAREN
-            Responde SOLO con la palabra (FRIDAY, EDITH o KAREN).""",
-            expected_output="FRIDAY, EDITH o KAREN",
-            agent=vision
-        )
-        crew_vis = Crew(agents=[vision], tasks=[tarea_vision], verbose=False)
-        decision = crew_vis.kickoff().raw.strip().upper()
-        
-        print(f"🤖 Jarvis enruta a: {decision}")
+        # 3. Visión clasifica la alerta (con bypass de LLM en modo demo)
+        if os.getenv("AZURE_TENANT_ID") == "demo":
+            desc_lower = desc.lower()
+            if "ransomware" in desc_lower or "malware" in desc_lower or "proceso" in desc_lower:
+                decision = "FRIDAY"
+            elif "zombie" in desc_lower:
+                decision = "EDITH"
+            elif "cve" in desc_lower:
+                decision = "KAREN"
+            else:
+                decision = "FRIDAY"  # fallback
+            print(f"🤖 [DEMO] Jarvis enruta a: {decision}")
+        else:
+            tarea_vision = Task(
+                description=f"""Analiza esta alerta: '{titulo} - {desc}'.
+                Determina quién debe investigar:
+                - Si es Ransomware, Malware, Procesos -> Responde: FRIDAY
+                - Si es Equipos Zombie -> Responde: EDITH
+                - Si es CVE -> Responde: KAREN
+                Responde SOLO con la palabra (FRIDAY, EDITH o KAREN).""",
+                expected_output="FRIDAY, EDITH o KAREN",
+                agent=vision
+            )
+            crew_vis = Crew(agents=[vision], tasks=[tarea_vision], verbose=False)
+            decision = crew_vis.kickoff().raw.strip().upper()
+            print(f"🤖 Jarvis enruta a: {decision}")
 
         # 4. ENRUTAMIENTO LIMPIO (Jarvis solo llama a la función)
         if "FRIDAY" in decision:
@@ -81,7 +103,11 @@ def procesar_alertas():
             print(reporte)
             
         elif "KAREN" in decision:
-            reporte = ejecutar_karen(equipo_afectado)
+            # Pequeña corrección: si la alerta menciona ASPM/código, auditar código
+            if "aspm" in desc.lower() or "codigo" in desc.lower() or "código" in desc.lower():
+                reporte = ejecutar_karen(equipo_afectado, tipo_auditoria="aspm")
+            else:
+                reporte = ejecutar_karen(equipo_afectado)
             print("\n=== RESULTADO K.A.R.E.N. (RBVM) ===")
             print(reporte)
             

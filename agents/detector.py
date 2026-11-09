@@ -2,7 +2,11 @@ from crewai import Agent, LLM
 from tools.sigma_converter import convert_sigma_to_kql
 import os
 
-llm = LLM(model="ollama_chat/qwen2.5:3b", base_url="http://localhost:11434", temperature=0.1)
+llm = LLM(
+    model="ollama_chat/qwen2.5:3b",
+    base_url=os.getenv("OLLAMA_URL", "http://localhost:11434"),
+    temperature=0.1
+)
 
 detector = Agent(
     role="Ingeniero de Detección (D.E.T.E.C.T.O.R.)",

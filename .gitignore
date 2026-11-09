@@ -2,15 +2,21 @@
 .env
 *.env
 !.env.example
+!.env.demo
 
 # Python
 __pycache__/
 *.py[cod]
 .venv/
 venv/
+.pytest_cache/
 
-# Evidencia local
+# Evidencia local (datos generados por el bot)
 data/
 audit/
-*.json
 aspm/data/
+trivy_results.json
+
+# OS
+.DS_Store
+Thumbs.db
