@@ -18,26 +18,45 @@
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
 
+graph TD
+    %% --- Entradas y Orquestación ---
+    subgraph Entrada["1. Ingesta y Orquestación"]
+        A[Splunk SIEM / Alertas] -->|Lectura de Alertas| B(J.A.R.V.I.S. - Orquestador)
+        B -->|Notificación| K[Slack API]
+        B -->|Triaje inicial| C(V.I.S.I.O.N. - Analista)
+    end
 
-    graph TD
-    A[Splunk SIEM / Alertas] -->|Lectura de Alertas| B(J.A.R.V.I.S. - Orquestador)
-    B -->|Notificacion / Alerta| K[Slack API]
-    B -->|Triaje| C(V.I.S.I.O.N. - Analista)
+    %% --- Distribución de Tareas ---
+    subgraph Especialistas["2. Agentes Especializados"]
+        C -->|Incidente DFIR| D[F.R.I.D.A.Y.]
+        C -->|Auditoría Red| E[E.D.I.T.H.]
+        C -->|Auditoría Código| F[K.A.R.E.N.]
+        C -->|Desconocido / Complejo| G[Escalado a Humano]
+    end
+
+    %% --- Recolección de Datos ---
+    subgraph Fuentes["3. Recolección de Evidencias"]
+        D -->|Investigación| H(Microsoft Defender)
+        E -->|Búsqueda Proactiva| H
+        F -->|Consulta CVEs| H
+    end
+
+    %% --- Procesamiento y Salida ---
+    subgraph Procesamiento["4. Análisis y Evidencia"]
+        H -.->|Persistencia de Evidencia| I[(Carpeta /data)]
+        
+        D -->|Análisis Forense| J(Ollama Local)
+        E -->|Análisis Tráfico/Red| J
+        F -->|Análisis EPSS / KEV| J
+    end
+
+    %% Estilos visuales
+    classDef default fill:#1f2937,stroke:#4b5563,stroke-width:1px,color:#fff;
+    classDef alert fill:#991b1b,stroke:#f87171,stroke-width:1px,color:#fff;
+    classDef core fill:#1e40af,stroke:#60a5fa,stroke-width:1px,color:#fff;
     
-    C -->|Incidente DFIR| D[F.R.I.D.A.Y.]
-    C -->|Auditoria Red| E[E.D.I.T.H.]
-    C -->|Auditoria Codigo| F[K.A.R.E.N.]
-    C -->|Desconocido| G[Escalado a Humano]
-
-    D -->|Investigacion| H(Microsoft Defender)
-    E -->|Busqueda Proactiva| H
-    F -->|Busqueda CVEs| H
-
-    H -.->|Evidencia| I(Carpeta /data)
-    
-    D -->|Analisis| J(Ollama Local)
-    E -->|Analisis| J
-    F -->|EPSS/KEV| J
+    class A,K alert;
+    class B,C core;
 
  ## 🤖 Los Agentes (El Equipo)
 
