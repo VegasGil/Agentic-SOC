@@ -6,8 +6,7 @@
 [![Splunk](https://img.shields.io/badge/SIEM-Splunk-green.svg)](https://www.splunk.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-**Agentic-SOC** es la evolución de una arquitectura de ciberseguridad tradicional hacia un **SOC Multi-Agente (SOAR)**. Utiliza Inteligencia Artificial local orquestada mediante agentes autónomos (CrewAI) para investigar alertas de seguridad, buscar amenazas de forma proactiva y priorizar vulnerabilidades basándose en riesgo real.
-
+*Agentic-SOC* es la evolución de una arquitectura de ciberseguridad tradicional hacia un **SOC Multi-Agente (SOAR)**. Utiliza Inteligencia Artificial local orquestada mediante agentes autónomos (CrewAI) para investigar alertas de seguridad, buscar amenazas de forma proactiva y priorizar vulnerabilidades basándose en riesgo real.
 
 > 🎥 *(Próximamente)*
 
@@ -17,45 +16,27 @@
 
 El sistema está diseñado bajo una arquitectura de microservicios para IA, donde el orquestador delega el trabajo pesado a agentes especializados.
 
-graph TD
-    %% --- Entradas y Orquestación ---
-    subgraph Entrada["1. Ingesta y Orquestación"]
-        A[Splunk SIEM / Alertas] -->|Lectura de Alertas| B(J.A.R.V.I.S. - Orquestador)
-        B -->|Notificación| K[Slack API]
-        B -->|Triaje inicial| C(V.I.S.I.O.N. - Analista)
-    end
-
-    %% --- Distribución de Tareas ---
-    subgraph Especialistas["2. Agentes Especializados"]
-        C -->|Incidente DFIR| D[F.R.I.D.A.Y.]
-        C -->|Auditoría Red| E[E.D.I.T.H.]
-        C -->|Auditoría Código| F[K.A.R.E.N.]
-        C -->|Desconocido / Complejo| G[Escalado a Humano]
-    end
-
-    %% --- Recolección de Datos ---
-    subgraph Fuentes["3. Recolección de Evidencias"]
-        D -->|Investigación| H(Microsoft Defender)
-        E -->|Búsqueda Proactiva| H
-        F -->|Consulta CVEs| H
-    end
-
-    %% --- Procesamiento y Salida ---
-    subgraph Procesamiento["4. Análisis y Evidencia"]
-        H -.->|Persistencia de Evidencia| I[(Carpeta /data)]
-        
-        D -->|Análisis Forense| J(Ollama Local)
-        E -->|Análisis Tráfico/Red| J
-        F -->|Análisis EPSS / KEV| J
-    end
-
-    %% Estilos visuales
-    classDef default fill:#1f2937,stroke:#4b5563,stroke-width:1px,color:#fff;
-    classDef alert fill:#991b1b,stroke:#f87171,stroke-width:1px,color:#fff;
-    classDef core fill:#1e40af,stroke:#60a5fa,stroke-width:1px,color:#fff;
-    
-    class A,K alert;
-    class B,C core;
+```text
+[ Splunk SIEM / Alertas ]
+         │
+         ▼ (Lectura de Alertas)
+┌─────────────────────────────┐
+│ J.A.R.V.I.S. (Orquestador)  ├──────► [ Slack API ] (Notificación)
+└──────────────┬──────────────┘
+               │
+               ▼ (Triaje inicial)
+┌─────────────────────────────┐
+│ V.I.S.I.O.N. (Analista)     │
+└──────┬──────┬───────┬───────┘
+       │      │       │
+       │      │       └───────► [ Escalado a Humano ] (Desconocido / Complejo)
+       │      │
+       │      └───────────────► K.A.R.E.N. (Auditoría Código) ──┐
+       │                      E.D.I.T.H. (Auditoría Red)    ──┼──► [ Microsoft Defender ] ──► ( Evidencia: /data )
+       └──────────────────────► F.R.I.D.A.Y. (Incidente DFIR) ──┘                                      │
+                                                                                                    ▼
+                                                                                            [ Ollama (Local) ]
+                                                                                         (Análisis y EPSS / KEV)
 
  ## 🤖 Los Agentes (El Equipo)
 
