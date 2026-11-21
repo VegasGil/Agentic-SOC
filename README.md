@@ -9,7 +9,9 @@
 
 *Agentic-SOC* es la evolución de una arquitectura de ciberseguridad tradicional hacia un **SOC Multi-Agente (SOAR)**. Utiliza Inteligencia Artificial local orquestada mediante agentes autónomos (CrewAI) para investigar alertas de seguridad, buscar amenazas de forma proactiva y priorizar vulnerabilidades basándose en riesgo real.
 
-> 🎥 [![Demo de Agentic-SOC](assets/demo-preview.gif)](https://youtu.be/F5X1xIvs0AY?si=Yon950kMs0ccEu6m)
+> ▶️ [Ver demostración completa en YouTube](https://youtu.be/F5X1xIvs0AY?si=Yon950kMs0ccEu6m)
+
+## 🏗️ Arquitectura
 
 ---
 
